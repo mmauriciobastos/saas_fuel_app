@@ -2,38 +2,73 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\DeliveryTruckRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
+#[ApiResource(
+    operations: [
+        new GetCollection(normalizationContext: ['groups' => ['truck:read']]),
+        new Get(normalizationContext: ['groups' => ['truck:read']]),
+        new Post(
+            denormalizationContext: ['groups' => ['truck:write']],
+            processor: \App\StateProcessor\CompanyStateProcessor::class
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['truck:write']],
+            processor: \App\StateProcessor\CompanyStateProcessor::class
+        ),
+        new Patch(
+            denormalizationContext: ['groups' => ['truck:write']],
+            processor: \App\StateProcessor\CompanyStateProcessor::class
+        ),
+        new Delete(),
+    ]
+)]
 #[ORM\Entity(repositoryClass: DeliveryTruckRepository::class)]
 class DeliveryTruck
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['truck:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['truck:read', 'truck:write'])]
     private ?string $licensePlate = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Groups(['truck:read', 'truck:write'])]
     private ?string $model = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Groups(['truck:read', 'truck:write'])]
     private ?string $driverName = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['truck:read', 'truck:write'])]
     private ?float $currentFuelLevel = null;
 
     #[ORM\Column(length: 20)]
+    #[Groups(['truck:read', 'truck:write'])]
     private ?string $status = null;
 
     #[ORM\Column]
+    #[Groups(['truck:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['truck:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'deliveryTrucks')]

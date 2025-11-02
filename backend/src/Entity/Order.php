@@ -2,10 +2,37 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\OrderRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
+#[ApiResource(
+    operations: [
+        new GetCollection(normalizationContext: ['groups' => ['order:read']]),
+        new Get(normalizationContext: ['groups' => ['order:read']]),
+        new Post(
+            denormalizationContext: ['groups' => ['order:write']],
+            processor: \App\StateProcessor\OrderStateProcessor::class
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['order:write']],
+            processor: \App\StateProcessor\OrderStateProcessor::class
+        ),
+        new Patch(
+            denormalizationContext: ['groups' => ['order:write']],
+            processor: \App\StateProcessor\OrderStateProcessor::class
+        ),
+        new Delete(),
+    ]
+)]
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
 class Order
@@ -13,27 +40,35 @@ class Order
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['order:read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Groups(['order:read', 'order:write'])]
     private ?string $fuelAmount = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['order:read', 'order:write'])]
     private ?string $deliveryAddress = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['order:read', 'order:write'])]
     private ?string $status = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['order:read', 'order:write'])]
     private ?string $notes = null;
 
     #[ORM\Column]
+    #[Groups(['order:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['order:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['order:read'])]
     private ?\DateTimeImmutable $deliveredAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]

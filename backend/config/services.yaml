@@ -18,3 +18,18 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # Configure state processors for API Platform
+    # Note: These will be used when specified in ApiResource attributes
+    App\StateProcessor\CompanyStateProcessor:
+        arguments:
+            $processor: '@api_platform.doctrine.orm.state.persist_processor'
+            $security: '@security.helper'
+        tags: ['api_platform.state_processor']
+
+    App\StateProcessor\OrderStateProcessor:
+        arguments:
+            $processor: '@api_platform.doctrine.orm.state.persist_processor'
+            $security: '@security.helper'
+            $em: '@doctrine.orm.entity_manager'
+        tags: ['api_platform.state_processor']

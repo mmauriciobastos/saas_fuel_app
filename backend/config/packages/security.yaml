@@ -28,6 +28,10 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/api/docs(\.json(ld)?|\.yaml)?$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/docs$, roles: PUBLIC_ACCESS }
+        - { path: ^/bundles/, roles: PUBLIC_ACCESS }
+        - { path: ^/api, roles: ROLE_USER }
 
 when@test:
     security:

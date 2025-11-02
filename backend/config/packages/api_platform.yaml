@@ -1,7 +1,19 @@
 api_platform:
-    title: Hello API Platform
+    title: ManagePetro API
     version: 1.0.0
+    description: API for the ManagePetro fuel delivery SaaS platform
     defaults:
         stateless: true
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin']
+        pagination_items_per_page: 30
+        pagination_maximum_items_per_page: 100
+    formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+    swagger:
+        versions: [3]
+        api_keys:
+            bearer:
+                name: Authorization
+                type: header
