@@ -65,7 +65,11 @@ class Client
 
     #[ORM\Column(length: 20, nullable: true)]
     #[Groups(['client:read', 'client:write'])]
-    private ?string $zipCode = null;
+    private ?string $postalCode = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    #[Groups(['client:read', 'client:write'])]
+    private ?string $stateProvince = null;
 
     #[ORM\Column]
     #[Groups(['client:read'])]
@@ -153,14 +157,26 @@ class Client
         return $this;
     }
 
-    public function getZipCode(): ?string
+    public function getPostalCode(): ?string
     {
-        return $this->zipCode;
+        return $this->postalCode;
     }
 
-    public function setZipCode(?string $zipCode): static
+    public function setPostalCode(?string $postalCode): static
     {
-        $this->zipCode = $zipCode;
+        $this->postalCode = $postalCode;
+
+        return $this;
+    }
+
+    public function getStateProvince(): ?string
+    {
+        return $this->stateProvince;
+    }
+
+    public function setStateProvince(?string $stateProvince): static
+    {
+        $this->stateProvince = $stateProvince;
 
         return $this;
     }

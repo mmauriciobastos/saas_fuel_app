@@ -60,7 +60,11 @@ class OrderFixtures extends Fixture implements DependentFixtureInterface
                 $liters = $faker->randomFloat(2, 50, 500);
                 $order->setFuelAmount((string) $liters);
 
-                $order->setDeliveryAddress($client->getAddress() . ', ' . $client->getCity() . ' ' . $client->getZipCode());
+                $order->setDeliveryAddress(
+                    trim(
+                        $client->getAddress() . ', ' . $client->getCity() . ' ' . ($client->getStateProvince() ?? '') . ' ' . ($client->getPostalCode() ?? '')
+                    )
+                );
 
                 $status = $faker->randomElement($statuses);
                 $order->setStatus($status);

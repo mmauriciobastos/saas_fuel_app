@@ -53,7 +53,10 @@ class AppFixtures extends Fixture
                 $client->setPhone($faker->phoneNumber());
                 $client->setAddress($faker->streetAddress());
                 $client->setCity($faker->city());
-                $client->setZipCode($faker->postcode());
+                // Canadian province abbreviations
+                $provinces = ['AB','BC','MB','NB','NL','NS','NT','NU','ON','PE','QC','SK','YT'];
+                $client->setStateProvince($faker->randomElement($provinces));
+                $client->setPostalCode($faker->postcode());
                 $client->setCompany($company);
                 $manager->persist($client);
                 $this->addReference(sprintf('company_%d_client_%d', $ci, $c), $client);
