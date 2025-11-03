@@ -13,20 +13,24 @@ use App\Repository\OrderRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['order:read']]),
         new Get(normalizationContext: ['groups' => ['order:read']]),
         new Post(
+            normalizationContext: ['groups' => ['order:read']],
             denormalizationContext: ['groups' => ['order:write']],
             processor: \App\StateProcessor\OrderStateProcessor::class
         ),
         new Put(
+            normalizationContext: ['groups' => ['order:read']],
             denormalizationContext: ['groups' => ['order:write']],
             processor: \App\StateProcessor\OrderStateProcessor::class
         ),
         new Patch(
+            normalizationContext: ['groups' => ['order:read']],
             denormalizationContext: ['groups' => ['order:write']],
             processor: \App\StateProcessor\OrderStateProcessor::class
         ),
@@ -81,10 +85,13 @@ class Order
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['order:read', 'order:write'])]
+    #[Assert\NotNull(message: 'Client is required for an order.')]
     private ?Client $client = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: true)]
+    #[Groups(['order:read', 'order:write'])]
     private ?DeliveryTruck $deliveryTruck = null;
 
     public function __construct()
