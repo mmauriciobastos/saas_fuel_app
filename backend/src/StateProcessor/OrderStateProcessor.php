@@ -11,6 +11,7 @@ use App\Entity\Order;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
  * State processor for Order entity that automatically sets user and handles client/truck relationships.
@@ -36,10 +37,20 @@ class OrderStateProcessor implements ProcessorInterface
             return $this->processor->process($data, $operation, $uriVariables, $context);
         }
 
-        // Set user on create
+        // Set relations on create
         if ($operation instanceof Post) {
             if ($data->getUser() === null) {
                 $data->setUser($user);
+            }
+
+            // Always set the company from the authenticated user
+            if ($data->getCompany() === null) {
+                $data->setCompany($user->getCompany());
+            }
+
+            // Require a client
+            if ($data->getClient() === null) {
+                throw new UnprocessableEntityHttpException('Client is required. Provide "client": "/api/clients/{id}".');
             }
 
             // If client is provided via IRI, we need to resolve it
