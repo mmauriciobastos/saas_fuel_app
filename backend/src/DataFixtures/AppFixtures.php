@@ -35,6 +35,8 @@ class AppFixtures extends Fixture
                 $user = new User();
                 $user->setEmail($faker->unique()->safeEmail());
                 $user->setCompany($company);
+                $user->setFirstName($faker->firstName());
+                $user->setLastName($faker->lastName());
                 // Make the first user an admin to help testing
                 if ($u === 1) {
                     $user->setRoles(['ROLE_ADMIN']);
