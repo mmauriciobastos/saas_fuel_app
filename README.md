@@ -44,6 +44,46 @@ managepetro/
    composer install
    ```
 
+4. **Generate JWT authentication keys:**
+
+   #### For Linux/macOS:
+   ```bash
+   cd backend
+   
+   # Create the JWT directory
+   mkdir -p config/jwt
+   
+   # Generate the private key (use the JWT_PASSPHRASE from .env file)
+   openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096 -pass pass:2c8a79e3756bcb7c165e968f4582d61a22fed912d50242e5097b8cf86bf0568c
+   
+   # Generate the public key
+   openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout -passin pass:2c8a79e3756bcb7c165e968f4582d61a22fed912d50242e5097b8cf86bf0568c
+   
+   # Set secure permissions
+   chmod 600 config/jwt/private.pem
+   chmod 644 config/jwt/public.pem
+   ```
+
+   #### For Windows:
+   ```powershell
+   cd backend
+   
+   # Create the JWT directory
+   mkdir config\jwt
+   
+   # Option 1: Use Docker to generate keys (recommended)
+   docker run --rm -v ${PWD}:/workspace alpine/openssl genpkey -out /workspace/config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096 -pass pass:2c8a79e3756bcb7c165e968f4582d61a22fed912d50242e5097b8cf86bf0568c
+   
+   docker run --rm -v ${PWD}:/workspace alpine/openssl pkey -in /workspace/config/jwt/private.pem -out /workspace/config/jwt/public.pem -pubout -passin pass:2c8a79e3756bcb7c165e968f4582d61a22fed912d50242e5097b8cf86bf0568c
+   ```
+
+   #### Alternative for Windows (if you have Git Bash or WSL):
+   ```bash
+   # Use the same commands as Linux/macOS above
+   ```
+
+   > **Note:** The JWT keys are required for authentication to work. Without these keys, you'll get a "JWT encode error" when trying to login via `/api/login`.
+
 ### Development Workflow
 
 #### Backend Development
