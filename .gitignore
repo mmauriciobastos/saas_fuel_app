@@ -56,7 +56,6 @@ $RECYCLE.BIN/
 *.log
 *.tmp
 *.cache
-.env
-.env.*
+
 !.env.example
 
