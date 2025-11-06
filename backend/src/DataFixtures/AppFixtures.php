@@ -23,9 +23,13 @@ class AppFixtures extends Fixture
         $totalCompanies = 10;
 
         for ($ci = 1; $ci <= $totalCompanies; $ci++) {
-            // Create Company with realistic name
+            // Create Company (use a deterministic default name for the first company)
             $company = new Company();
-            $companyName = $faker->company() . ' ' . $faker->randomElement(['Fuel', 'Petro', 'Energy', 'Oil']);
+            if ($ci === 1) {
+                $companyName = 'Petro Delivery Company';
+            } else {
+                $companyName = $faker->company() . ' ' . $faker->randomElement(['Fuel', 'Petro', 'Energy', 'Oil']);
+            }
             $company->setName($companyName);
             $company->setSlug(self::slugify($companyName));
             $manager->persist($company);
@@ -33,10 +37,17 @@ class AppFixtures extends Fixture
             // Users per company
             for ($u = 1; $u <= 2; $u++) {
                 $user = new User();
-                $user->setEmail($faker->unique()->safeEmail());
+                // Default deterministic user for the default company (company 1, user 1)
+                if ($ci === 1 && $u === 1) {
+                    $user->setEmail('william.mcallister@example.com');
+                    $user->setFirstName('William');
+                    $user->setLastName('McAllister');
+                } else {
+                    $user->setEmail($faker->unique()->safeEmail());
+                    $user->setFirstName($faker->firstName());
+                    $user->setLastName($faker->lastName());
+                }
                 $user->setCompany($company);
-                $user->setFirstName($faker->firstName());
-                $user->setLastName($faker->lastName());
                 // Make the first user an admin to help testing
                 if ($u === 1) {
                     $user->setRoles(['ROLE_ADMIN']);
@@ -45,6 +56,9 @@ class AppFixtures extends Fixture
                 $user->setPassword($hashed);
                 $manager->persist($user);
                 $this->addReference(sprintf('company_%d_user_%d', $ci, $u), $user);
+                if ($ci === 1 && $u === 1) {
+                    $this->addReference('user_default', $user);
+                }
             }
 
             // Clients per company (up to 100)
@@ -65,22 +79,27 @@ class AppFixtures extends Fixture
                 $this->addReference(sprintf('company_%d_client_%d', $ci, $c), $client);
             }
 
-            // Delivery trucks per company
+            // Delivery trucks per company (~10 per company)
             $truckModels = ['Volvo FM', 'MAN TGS', 'Scania R', 'Mercedes-Benz Actros', 'Iveco Stralis'];
-            for ($t = 1; $t <= 2; $t++) {
+            $trucksPerCompany = 10;
+            for ($t = 1; $t <= $trucksPerCompany; $t++) {
                 $truck = new DeliveryTruck();
                 $truck->setLicensePlate($faker->bothify('??-####'));
                 $truck->setModel($faker->randomElement($truckModels));
                 $truck->setDriverName($faker->name());
-                $truck->setCurrentFuelLevel($faker->randomFloat(2, 10, 90));
+                // Fuel level between 3000 and 6000 liters
+                $truck->setCurrentFuelLevel($faker->randomFloat(2, 3000, 6000));
                 $truck->setStatus($faker->randomElement(['available', 'in_use', 'maintenance']));
                 $truck->setCompany($company);
                 $manager->persist($truck);
                 $this->addReference(sprintf('company_%d_truck_%d', $ci, $t), $truck);
             }
 
-            // Save a reference for potential use in other fixtures
+            // Save references for potential use in other fixtures
             $this->addReference('company_' . $ci, $company);
+            if ($ci === 1) {
+                $this->addReference('company_default', $company);
+            }
         }
 
         $manager->flush();

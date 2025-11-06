@@ -50,7 +50,8 @@ class OrderFixtures extends Fixture implements DependentFixtureInterface
 
                 // Optionally link to a truck (70% of the time)
                 if ($faker->boolean(70)) {
-                    $truckIndex = random_int(1, 2);
+                    // We create 10 trucks per company in AppFixtures
+                    $truckIndex = random_int(1, 10);
                     /** @var \App\Entity\DeliveryTruck $truck */
                     $truck = $this->getReference(sprintf('company_%d_truck_%d', $ci, $truckIndex), \App\Entity\DeliveryTruck::class);
                     $order->setDeliveryTruck($truck);
