@@ -1,6 +1,7 @@
 # SaaS Fuel App
 
-A 
+Backend API built with Symfony for a multi-tenant fuel delivery SaaS platform.
+Provides secure authentication, company-scoped data access, and resources for managing clients, orders, trucks, and users.
 
 ## 📁 Project Structure
 
@@ -113,6 +114,29 @@ http://localhost:8081
 | Login     | admin@local.com   |
 | Password  | admin             |
 
+
+## Frontend (Admin Panel - Next.js)
+
+The frontend administration panel is located in a separate repository.
+
+### Clone the Frontend Repository
+
+Clone it outside the `saas_fuel_app` folder (or anywhere you prefer):
+
+git clone https://github.com/mmauriciobastos/saas_fuel_admin.git
+
+### Start the Frontend Application
+
+Navigate to the frontend project and start the containers:
+
+cd saas_fuel_admin
+docker-compose up -d
+
+This will build and run the Next.js application.
+
+### Access the Frontend
+
+http://localhost:3000
 
 # Run tests
 php bin/phpunit
