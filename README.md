@@ -1,11 +1,11 @@
-# ManagePetro Monorepo
+# SaaS Fuel App
 
-A monorepo containing the ManagePetro application backend and infrastructure configurations.
+A 
 
 ## 📁 Project Structure
 
 ```
-managepetro/
+saas_fuel_app/
 ├── backend/          # Symfony application
 │   ├── src/          # Application source code
 │   ├── config/       # Symfony configuration
@@ -20,44 +20,99 @@ managepetro/
 
 ## 🚀 Getting Started
 
-### Prerequisites
 
-- Docker and Docker Compose
-- Git
+## Prerequisites
 
-### Quick Start
+Make sure you have the following installed on your machine:
 
-1. **Start the development environment:**
-   ```bash
-   cd infra
-   docker-compose up -d
-   ```
+- **Docker**
+- **Docker Compose**
+- **Git**
 
-2. **Access the application:**
-   - Application: http://localhost:8000
-   - pgAdmin: http://localhost:8081
-   - Database: localhost:5432
+---
 
-3. **Install backend dependencies:**
-   ```bash
-   cd backend
-   composer install
-   ```
-
-### Development Workflow
-
-#### Backend Development
+## Clone the Repository
 
 ```bash
-# Navigate to backend
+git clone https://github.com/mmauriciobastos/saas_fuel_app.git
+```
+
+Navigate into the project directory:
+
+```bash
+cd saas_fuel_app
+```
+
+---
+
+## Start the Docker Environment
+
+The Docker setup is located inside the `infra` folder:
+
+```bash
+cd infra
+docker-compose up -d
+```
+
+This will build and start all required containers.
+
+---
+
+## Install Backend Dependencies
+
+Navigate to the backend (Symfony API) folder:
+
+```bash
+cd ..
 cd backend
+```
 
-# Install dependencies
-composer install
+Install PHP dependencies inside the container:
 
-# Run Symfony commands
-php bin/console cache:clear
-php bin/console doctrine:migrations:migrate
+```bash
+docker exec -it symfony-app composer install
+```
+
+---
+
+## Database Setup
+
+Generate and run migrations:
+
+```bash
+docker exec -it symfony-app php bin/console doctrine:migrations:diff
+docker exec -it symfony-app php bin/console doctrine:migrations:migrate
+```
+
+Seed the database with fixtures:
+
+```bash
+docker exec -it symfony-app php bin/console doctrine:fixtures:load
+```
+
+---
+
+## Accessing the Application
+
+### API (Swagger UI)
+Open in your browser:
+
+```
+http://localhost/api/docs
+```
+
+### pgAdmin
+```
+http://localhost:8081
+```
+
+**pgAdmin Credentials:**
+
+| Field      | Value             |
+|-----------|-------------------|
+| Login     | admin@local.com   |
+| Password  | admin             |
+
 
 # Run tests
 php bin/phpunit
